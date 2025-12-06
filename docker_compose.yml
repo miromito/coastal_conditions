@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  spearfishing-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spearfishing-conditions
+    ports:
+      - "3000:80"
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    networks:
+      - spearfishing-network
+
+networks:
+  spearfishing-network:
+    driver: bridge

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Waves, Wind, Droplets, Sun, Cloud, CloudRain, Navigation, Search, Fish, Eye, Activity, AlertCircle, RefreshCw } from 'lucide-react';
+import { Waves, Wind, Droplets, Sun, Cloud, CloudRain, Navigation, Search, Fish, Activity, AlertCircle, RefreshCw } from 'lucide-react';
 
 // Mock data for Alanya, Turkey (36.5444°N, 31.9878°E)
 const MOCK_DATA = {

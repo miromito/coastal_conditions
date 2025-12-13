@@ -201,11 +201,11 @@ export default function SpearfishingApp() {
 
   if (loading && !data) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-600 via-cyan-600 to-teal-600 flex items-center justify-center p-4">
-        <div className="bg-white/20 backdrop-blur-md rounded-2xl p-8 border-2 border-white/30">
-          <div className="text-white text-xl mb-3 text-center">Loading conditions...</div>
+      <div className="h-screen bg-gradient-to-br from-blue-600 via-cyan-600 to-teal-600 flex items-center justify-center p-4">
+        <div className="bg-white/20 backdrop-blur-md rounded-xl p-6 border-2 border-white/30">
+          <div className="text-white text-lg mb-2 text-center">Loading conditions...</div>
           <div className="flex justify-center">
-            <Waves className="w-8 h-8 text-white animate-pulse" />
+            <Waves className="w-6 h-6 text-white animate-pulse" />
           </div>
         </div>
       </div>
@@ -215,159 +215,166 @@ export default function SpearfishingApp() {
   const fishingConditions = data ? getSpearfishingConditions() : null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-cyan-600 to-teal-600 p-4 md:p-8">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-2 flex items-center justify-center gap-3">
-            <Fish className="w-10 h-10" />
-            Spearfishing Conditions
-          </h1>
-          <p className="text-white/90">Real-time ocean conditions for spearfishing</p>
+    <div className="h-screen bg-gradient-to-br from-blue-600 via-cyan-600 to-teal-600 p-2 md:p-3 overflow-hidden">
+      <div className="h-full max-w-7xl mx-auto flex flex-col">
+        {/* Header with Search/Location in Top Right */}
+        <div className="flex items-center justify-between mb-2 gap-3">
+          <div className="flex items-center gap-2">
+            <Fish className="w-6 h-6 text-white" />
+            <h1 className="text-xl md:text-2xl font-bold text-white">Spearfishing Conditions</h1>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <input
+                type="text"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyDown={handleKeyPress}
+                placeholder="Search location..."
+                className="w-48 px-3 py-1.5 pr-10 rounded-full bg-white/20 backdrop-blur-md text-white placeholder-white/70 border-2 border-white/30 focus:outline-none focus:border-white/60 text-sm"
+              />
+              <button
+                onClick={handleSearch}
+                className="absolute right-1 top-1/2 -translate-y-1/2 p-1.5 bg-white/30 rounded-full hover:bg-white/40 transition"
+              >
+                <Search className="w-4 h-4 text-white" />
+              </button>
+            </div>
+            {data && data.location && (
+              <div className="bg-white/20 backdrop-blur-md rounded-lg px-3 py-1.5 border-2 border-white/30">
+                <div className="text-white font-semibold text-sm whitespace-nowrap">
+                  {data.location}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Search Bar */}
-        <div className="mb-8">
-          <div className="max-w-md mx-auto relative">
-            <input
-              type="text"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              onKeyDown={handleKeyPress}
-              placeholder="Search coastal location..."
-              className="w-full px-4 py-3 pr-12 rounded-full bg-white/20 backdrop-blur-md text-white placeholder-white/70 border-2 border-white/30 focus:outline-none focus:border-white/60"
-            />
-            <button
-              onClick={handleSearch}
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-white/30 rounded-full hover:bg-white/40 transition"
+        {/* Compact Notices */}
+        {usingMockData && (
+          <div className="bg-blue-500/20 backdrop-blur-md border border-blue-300 text-white px-3 py-1.5 rounded-lg mb-2 text-xs flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 flex-shrink-0" />
+              <span className="font-semibold">Demo Mode</span>
+            </div>
+            <button 
+              onClick={() => fetchData(location)}
+              className="p-1 bg-white/20 rounded hover:bg-white/30 transition"
+              title="Retry with live data"
             >
-              <Search className="w-5 h-5 text-white" />
+              <RefreshCw className="w-3 h-3" />
             </button>
           </div>
-          <div className="text-center mt-3 text-white/70 text-sm">
-            Try: Alanya, Bodrum, Antalya, Cyprus, Marmaris
-          </div>
-        </div>
+        )}
 
-        {/* Mock Data Notice */}
-        {usingMockData && (
-          <div className="bg-blue-500/20 backdrop-blur-md border-2 border-blue-300 text-white p-4 rounded-2xl mb-6">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-              <div className="flex-1">
-                <p className="font-semibold mb-1">📊 Demo Mode</p>
-                <p className="text-sm text-white/90">
-                  Showing sample data for Alanya. The live API may be blocked by your network or browser.
-                </p>
-              </div>
+        {error && (
+          <div className="bg-red-500/20 backdrop-blur-md border border-red-300 text-white px-3 py-1.5 rounded-lg mb-2 text-xs">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 flex-shrink-0" />
+              <span>{error}</span>
               <button 
-                onClick={() => fetchData(location)}
-                className="p-2 bg-white/20 rounded-lg hover:bg-white/30 transition"
-                title="Retry with live data"
+                onClick={() => fetchData('Alanya')}
+                className="ml-auto px-2 py-1 bg-white/20 rounded hover:bg-white/30 transition text-xs"
               >
-                <RefreshCw className="w-4 h-4" />
+                Load Demo
               </button>
             </div>
           </div>
         )}
 
-        {error && (
-          <div className="bg-red-500/20 backdrop-blur-md border-2 border-red-300 text-white p-5 rounded-2xl mb-8">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="w-6 h-6 flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="font-semibold mb-1">{error}</p>
-                <p className="text-sm text-white/80 mb-3">The API may be blocked by network restrictions.</p>
-                <button 
-                  onClick={() => fetchData('Alanya')}
-                  className="px-4 py-2 bg-white/20 rounded-lg hover:bg-white/30 transition text-sm font-medium"
-                >
-                  Load Alanya Demo Data
-                </button>
+        {/* Main Content - Efficient Grid Layout */}
+        {data && data.marine.current && data.weather.current && (
+          <div className="flex-1 flex flex-col gap-2 overflow-hidden">
+            {/* Top Row: Conditions Rating and Location Summary */}
+            <div className="grid grid-cols-2 gap-2">
+              {/* Conditions Rating */}
+              {fishingConditions && (
+                <div className="bg-white/20 backdrop-blur-md rounded-xl p-3 border-2 border-white/30 flex flex-col">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Activity className="w-5 h-5 text-white" />
+                    <h3 className="text-base font-bold text-white">Conditions Rating</h3>
+                  </div>
+                  
+                  <div className="mb-2">
+                    <div className="flex justify-between mb-1">
+                      <span className="text-white text-lg font-bold">
+                        {fishingConditions.emoji} {fishingConditions.rating}
+                      </span>
+                      <span className="text-white text-lg font-bold">{fishingConditions.score}/100</span>
+                    </div>
+                    <div className="w-full bg-white/20 rounded-full h-3 overflow-hidden">
+                      <div 
+                        className={`h-full ${fishingConditions.color} transition-all duration-700`}
+                        style={{ width: `${fishingConditions.score}%` }}
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-1 text-xs text-white/95">
+                    {fishingConditions.conditions.map((condition, idx) => (
+                      <div key={idx} className="truncate">{condition}</div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Location Summary Block */}
+              <div className="bg-white/20 backdrop-blur-md rounded-xl p-3 border-2 border-white/30 flex flex-col justify-center">
+                <div className="text-center">
+                  <div className="text-white/70 text-xs mb-1">Current Location</div>
+                  <div className="text-white text-xl font-bold mb-3">{data.location}</div>
+                  {data.coords && (
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div className="text-white/70">Coordinates</div>
+                      <div className="text-white font-semibold">
+                        {data.coords.latitude.toFixed(4)}°N, {data.coords.longitude.toFixed(4)}°E
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        )}
 
-        {data && data.marine.current && data.weather.current && (
-          <>
-            {/* Location Title */}
-            <h2 className="text-3xl font-bold text-white text-center mb-8">
-              {data.location}
-            </h2>
-
-            {/* Conditions Score Card */}
-            {fishingConditions && (
-              <div className="bg-white/20 backdrop-blur-md rounded-3xl p-6 border-2 border-white/30 mb-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <Activity className="w-8 h-8 text-white" />
-                  <h3 className="text-2xl font-bold text-white">Conditions Rating</h3>
-                </div>
-                
-                <div className="mb-6">
-                  <div className="flex justify-between mb-2">
-                    <span className="text-white text-xl font-bold">
-                      {fishingConditions.emoji} {fishingConditions.rating}
-                    </span>
-                    <span className="text-white text-xl font-bold">{fishingConditions.score}/100</span>
-                  </div>
-                  <div className="w-full bg-white/20 rounded-full h-5 overflow-hidden">
-                    <div 
-                      className={`h-full ${fishingConditions.color} transition-all duration-700`}
-                      style={{ width: `${fishingConditions.score}%` }}
-                    />
-                  </div>
+            {/* Middle Row: Three Main Data Cards */}
+            <div className="grid grid-cols-3 gap-2">
+              {/* Marine Conditions Card */}
+              <div className="bg-white/20 backdrop-blur-md rounded-xl p-3 border-2 border-white/30">
+                <div className="flex items-center gap-2 mb-2">
+                  <Waves className="w-5 h-5 text-white" />
+                  <h3 className="text-sm font-bold text-white">Sea State</h3>
                 </div>
                 
                 <div className="space-y-2">
-                  {fishingConditions.conditions.map((condition, idx) => (
-                    <div key={idx} className="text-white/95 text-base">
-                      {condition}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Main Grid */}
-            <div className="grid md:grid-cols-3 gap-6 mb-6">
-              {/* Marine Conditions Card */}
-              <div className="bg-white/20 backdrop-blur-md rounded-3xl p-6 border-2 border-white/30">
-                <div className="flex items-center gap-3 mb-6">
-                  <Waves className="w-8 h-8 text-white" />
-                  <h3 className="text-xl font-bold text-white">Sea State</h3>
-                </div>
-                
-                <div className="space-y-4">
                   <div>
-                    <div className="text-white/70 text-sm mb-1">Wave Height</div>
-                    <div className="text-4xl font-bold text-white">
+                    <div className="text-white/70 text-xs mb-0.5">Wave Height</div>
+                    <div className="text-2xl font-bold text-white">
                       {(data.marine.current.wave_height || 0).toFixed(1)}m
                     </div>
                   </div>
                   
-                  <div>
-                    <div className="text-white/70 text-sm mb-1">Swell Height</div>
-                    <div className="text-2xl font-semibold text-white">
-                      {(data.marine.current.swell_wave_height || 0).toFixed(1)}m
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div>
+                      <div className="text-white/70 mb-0.5">Swell</div>
+                      <div className="text-white font-semibold">
+                        {(data.marine.current.swell_wave_height || 0).toFixed(1)}m
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-white/70 mb-0.5">Period</div>
+                      <div className="text-white font-semibold">
+                        {(data.marine.current.wave_period || 0).toFixed(1)}s
+                      </div>
                     </div>
                   </div>
                   
-                  <div>
-                    <div className="text-white/70 text-sm mb-1">Wave Period</div>
-                    <div className="text-2xl font-semibold text-white">
-                      {(data.marine.current.wave_period || 0).toFixed(1)}s
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between pt-2">
-                    <span className="text-white/70 text-sm">Direction</span>
-                    <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-between pt-1 border-t border-white/20">
+                    <span className="text-white/70 text-xs">Direction</span>
+                    <div className="flex items-center gap-1">
                       <Navigation 
-                        className="w-6 h-6 text-white" 
+                        className="w-4 h-4 text-white" 
                         style={{ transform: getDirectionArrow(data.marine.current.wave_direction) }}
                       />
-                      <span className="text-xl font-semibold text-white">
+                      <span className="text-sm font-semibold text-white">
                         {Math.round(data.marine.current.wave_direction || 0)}°
                       </span>
                     </div>
@@ -376,71 +383,72 @@ export default function SpearfishingApp() {
               </div>
 
               {/* Weather Card */}
-              <div className="bg-white/20 backdrop-blur-md rounded-3xl p-6 border-2 border-white/30">
-                <div className="flex items-center gap-3 mb-6">
+              <div className="bg-white/20 backdrop-blur-md rounded-xl p-3 border-2 border-white/30">
+                <div className="flex items-center gap-2 mb-2">
                   {getWeatherIcon(data.weather.current.weather_code)}
-                  <h3 className="text-xl font-bold text-white">Weather</h3>
+                  <h3 className="text-sm font-bold text-white">Weather</h3>
                 </div>
                 
-                <div className="space-y-4">
+                <div className="space-y-2">
                   <div>
-                    <div className="text-white/70 text-sm mb-1">Temperature</div>
-                    <div className="text-4xl font-bold text-white">
+                    <div className="text-white/70 text-xs mb-0.5">Temperature</div>
+                    <div className="text-2xl font-bold text-white">
                       {Math.round(data.weather.current.temperature_2m || 0)}°C
                     </div>
                   </div>
                   
-                  <div className="flex items-center justify-between">
-                    <span className="text-white/70 text-sm flex items-center gap-2">
-                      <Droplets className="w-4 h-4" /> Humidity
-                    </span>
-                    <span className="text-xl font-semibold text-white">
-                      {Math.round(data.weather.current.relative_humidity_2m || 0)}%
-                    </span>
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <span className="text-white/70 text-sm flex items-center gap-2">
-                      <Cloud className="w-4 h-4" /> Cloud Cover
-                    </span>
-                    <span className="text-xl font-semibold text-white">
-                      {Math.round(data.weather.current.cloud_cover || 0)}%
-                    </span>
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div>
+                      <div className="text-white/70 mb-0.5 flex items-center gap-1">
+                        <Droplets className="w-3 h-3" /> Humidity
+                      </div>
+                      <div className="text-white font-semibold">
+                        {Math.round(data.weather.current.relative_humidity_2m || 0)}%
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-white/70 mb-0.5 flex items-center gap-1">
+                        <Cloud className="w-3 h-3" /> Cloud
+                      </div>
+                      <div className="text-white font-semibold">
+                        {Math.round(data.weather.current.cloud_cover || 0)}%
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* Wind Card */}
-              <div className="bg-white/20 backdrop-blur-md rounded-3xl p-6 border-2 border-white/30">
-                <div className="flex items-center gap-3 mb-6">
-                  <Wind className="w-8 h-8 text-white" />
-                  <h3 className="text-xl font-bold text-white">Wind</h3>
+              <div className="bg-white/20 backdrop-blur-md rounded-xl p-3 border-2 border-white/30">
+                <div className="flex items-center gap-2 mb-2">
+                  <Wind className="w-5 h-5 text-white" />
+                  <h3 className="text-sm font-bold text-white">Wind</h3>
                 </div>
                 
-                <div className="space-y-4">
+                <div className="space-y-2">
                   <div>
-                    <div className="text-white/70 text-sm mb-1">Speed</div>
-                    <div className="text-4xl font-bold text-white">
+                    <div className="text-white/70 text-xs mb-0.5">Speed</div>
+                    <div className="text-2xl font-bold text-white">
                       {Math.round(data.weather.current.wind_speed_10m || 0)}
-                      <span className="text-2xl"> km/h</span>
+                      <span className="text-sm"> km/h</span>
                     </div>
                   </div>
                   
-                  <div className="flex items-center justify-between pt-2">
-                    <span className="text-white/70 text-sm">Direction</span>
-                    <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-between pt-1 border-t border-white/20">
+                    <span className="text-white/70 text-xs">Direction</span>
+                    <div className="flex items-center gap-1">
                       <Navigation 
-                        className="w-6 h-6 text-white" 
+                        className="w-4 h-4 text-white" 
                         style={{ transform: getDirectionArrow(data.weather.current.wind_direction_10m) }}
                       />
-                      <span className="text-xl font-semibold text-white">
+                      <span className="text-sm font-semibold text-white">
                         {Math.round(data.weather.current.wind_direction_10m || 0)}°
                       </span>
                     </div>
                   </div>
                   
-                  <div className="mt-6 p-4 bg-white/10 rounded-xl">
-                    <p className="text-white text-sm text-center font-medium">
+                  <div className="mt-2 p-2 bg-white/10 rounded-lg">
+                    <p className="text-white text-xs text-center font-medium">
                       {(data.weather.current.wind_speed_10m || 0) < 10 
                         ? "🎯 Perfect diving weather" 
                         : (data.weather.current.wind_speed_10m || 0) < 20 
@@ -452,38 +460,38 @@ export default function SpearfishingApp() {
               </div>
             </div>
 
-            {/* 3-Day Forecast */}
+            {/* Bottom Row: 3-Day Forecast - Horizontal Layout */}
             {data.marine.daily && data.weather.daily && (
-              <div className="bg-white/20 backdrop-blur-md rounded-3xl p-6 border-2 border-white/30">
-                <h3 className="text-2xl font-bold text-white mb-4">3-Day Forecast</h3>
-                <div className="grid md:grid-cols-3 gap-4">
+              <div className="bg-white/20 backdrop-blur-md rounded-xl p-3 border-2 border-white/30">
+                <h3 className="text-sm font-bold text-white mb-2">3-Day Forecast</h3>
+                <div className="grid grid-cols-3 gap-3">
                   {data.marine.daily.time.slice(0, 3).map((date, idx) => (
                     <div 
                       key={idx} 
-                      className="bg-white/10 rounded-xl p-5"
+                      className="bg-white/10 rounded-lg p-2"
                     >
-                      <div className="text-white font-bold text-lg mb-3">
+                      <div className="text-white font-bold text-xs mb-2">
                         {new Date(date).toLocaleDateString('en-US', { 
                           weekday: 'short',
                           month: 'short',
                           day: 'numeric'
                         })}
                       </div>
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-white/90">
+                      <div className="space-y-1.5">
+                        <div className="flex justify-between text-white/90 text-xs">
                           <span>Max Waves</span>
                           <span className="font-bold">
                             {(data.marine.daily.wave_height_max[idx] || 0).toFixed(1)}m
                           </span>
                         </div>
-                        <div className="flex justify-between text-white/90">
+                        <div className="flex justify-between text-white/90 text-xs">
                           <span>Temp Range</span>
                           <span className="font-bold">
                             {Math.round(data.weather.daily.temperature_2m_min[idx] || 0)}-
                             {Math.round(data.weather.daily.temperature_2m_max[idx] || 0)}°C
                           </span>
                         </div>
-                        <div className="flex justify-between text-white/90">
+                        <div className="flex justify-between text-white/90 text-xs">
                           <span>UV Index</span>
                           <span className="font-bold">
                             {(data.weather.daily.uv_index_max[idx] || 0).toFixed(1)}
@@ -495,11 +503,11 @@ export default function SpearfishingApp() {
                 </div>
               </div>
             )}
-          </>
+          </div>
         )}
 
-        {/* Footer */}
-        <div className="text-center mt-8 text-white/60 text-sm">
+        {/* Compact Footer */}
+        <div className="text-center mt-1 text-white/60 text-xs">
           {usingMockData ? 'Demo Data' : 'Powered by Open-Meteo APIs'}
         </div>
       </div>

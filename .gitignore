@@ -29,3 +29,9 @@ yarn-error.log*
 
 # Docker
 .dockerignore
+
+# Firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
